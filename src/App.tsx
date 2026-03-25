@@ -1,153 +1,170 @@
 import React, { useState } from 'react';
-import { Download, BookOpen, Key, Shield, Layout, Zap, CheckCircle2, FileText, List, AlertCircle, ExternalLink, X } from 'lucide-react';
+import { Download, BookOpen, Key, Shield, Layout, Zap, CheckCircle2, FileText, List, AlertCircle, ExternalLink, X, ChevronDown } from 'lucide-react';
+// @ts-ignore
+import html2pdf from 'html2pdf.js';
 
-const content = {
-  title: { en: "Lecture 1: Introduction to Laboratory Design", ar: "المحاضرة 1: مقدمة في تصميم المختبرات" },
-  subtitle: { en: "Medical Instrumentation I - Second Stage", ar: "الأجهزة الطبية 1 - المرحلة الثانية" },
-  summaryTitle: { en: "Lecture Summary", ar: "ملخص المحاضرة" },
-  summary: {
-    en: "This lecture covers the fundamental principles of designing a laboratory, focusing on safety, workflow efficiency, flexibility, and environmental considerations. It details the essential elements like layout zoning, ventilation, workstations, and safety protocols required to create a functional and secure laboratory environment.",
-    ar: "تغطي هذه المحاضرة المبادئ الأساسية لتصميم المختبرات، مع التركيز على السلامة، كفاءة سير العمل، المرونة، والاعتبارات البيئية. كما تفصل العناصر الأساسية مثل تقسيم المساحات، التهوية، محطات العمل، وبروتوكولات السلامة اللازمة لإنشاء بيئة مختبرية عملية وآمنة."
+const lectures: Record<string, any> = {
+  lecture2: {
+    title: { en: "Lecture 2: Centrifuge", ar: "المحاضرة 2: جهاز الطرد المركزي (Centrifuge)" },
+    subtitle: { en: "Medical Instrumentation I - Second Stage", ar: "الأجهزة الطبية 1 - المرحلة الثانية" },
+    summaryTitle: { en: "Lecture Summary", ar: "ملخص المحاضرة" },
+    summary: {
+      en: "This lecture introduces the centrifuge, a device that uses centrifugal force to separate suspended solids in a liquid or liquids of diverse densities. It covers the operation principle, main components, safety precautions, types of rotors, and common faults and maintenance procedures.",
+      ar: "تقدم هذه المحاضرة جهاز الطرد المركزي، وهو جهاز يستخدم قوة الطرد المركزي لفصل المواد الصلبة المعلقة في سائل أو السوائل ذات الكثافات المختلفة. تغطي المحاضرة مبدأ العمل، الأجزاء الرئيسية، احتياطات السلامة، أنواع الدوارات، بالإضافة إلى الأعطال الشائعة وإجراءات الصيانة."
+    },
+    termsTitle: { en: "Key Terms", ar: "أهم المصطلحات" },
+    terms: [
+      {
+        id: "centrifuge",
+        color: "blue",
+        en: { term: "Centrifuge", def: "A device that uses centrifugal force to separate substances of different densities." },
+        ar: { term: "جهاز الطرد المركزي", def: "جهاز يستخدم قوة الطرد المركزي لفصل المواد ذات الكثافات المختلفة." }
+      },
+      {
+        id: "centrifugal-force",
+        color: "emerald",
+        en: { term: "Centrifugal Force", def: "The force generated when an object rotates around a single point, causing outward movement." },
+        ar: { term: "قوة الطرد المركزي", def: "القوة المتولدة عند دوران جسم حول نقطة واحدة، مما يسبب حركة نحو الخارج." }
+      },
+      {
+        id: "sedimentation",
+        color: "amber",
+        en: { term: "Sedimentation", def: "The process of settling down of heavier particles at the bottom of a liquid." },
+        ar: { term: "الترسيب", def: "عملية استقرار الجسيمات الأثقل في قاع السائل." }
+      },
+      {
+        id: "rotor",
+        color: "purple",
+        en: { term: "Rotor", def: "The rotating part of the centrifuge that houses the tubes with the samples." },
+        ar: { term: "الدوار", def: "الجزء الدوار في جهاز الطرد المركزي الذي يحمل الأنابيب التي تحتوي على العينات." }
+      },
+      {
+        id: "supernatant",
+        color: "rose",
+        en: { term: "Supernatant", def: "The clear liquid that lies above the solid residue after centrifugation." },
+        ar: { term: "السائل الطافي", def: "السائل الصافي الذي يطفو فوق البقايا الصلبة بعد عملية الطرد المركزي." }
+      }
+    ],
+    sectionsTitle: { en: "Detailed Notes", ar: "الملاحظات التفصيلية" },
+    sections: [
+      {
+        icon: <Zap className="w-5 h-5" />,
+        en: {
+          title: "1. Operation Principle",
+          items: [
+            "Uses centrifugal force to separate solids suspended in a liquid or liquids of diverse density.",
+            "Separates particles from samples like blood or urine (e.g., getting cell-free plasma or serum).",
+            "Separates lipid components from other components of plasma or serum."
+          ]
+        },
+        ar: {
+          title: "1. مبدأ العمل",
+          items: [
+            "يستخدم قوة الطرد المركزي لفصل المواد الصلبة المعلقة في سائل أو السوائل ذات الكثافة المختلفة.",
+            "يفصل الجسيمات من العينات مثل الدم أو البول (مثل الحصول على بلازما أو مصل خالي من الخلايا).",
+            "يفصل المكونات الدهنية عن المكونات الأخرى للبلازما أو المصل."
+          ]
+        }
+      },
+      {
+        icon: <Layout className="w-5 h-5" />,
+        en: {
+          title: "2. Main Parts of a Centrifuge",
+          items: [
+            "Motor: Electric motor that drives the centrifuge.",
+            "Control Panel: Controls the operation.",
+            "Chamber & Rotor: The chamber houses the entire system, while the rotor holds the sample tubes.",
+            "Latch & Lid: Keeps the centrifuge closed safely during operation.",
+            "Drive Shaft & Screen: Connects the motor to the rotor and displays information."
+          ]
+        },
+        ar: {
+          title: "2. الأجزاء الرئيسية لجهاز الطرد المركزي",
+          items: [
+            "المحرك (Motor): محرك كهربائي يشغل الجهاز.",
+            "لوحة التحكم (Control Panel): تتحكم في عملية التشغيل.",
+            "الغرفة والدوار (Chamber & Rotor): الغرفة تحوي النظام بأكمله، بينما الدوار يحمل أنابيب العينات.",
+            "القفل والغطاء (Latch & Lid): يحافظ على إغلاق الجهاز بأمان أثناء التشغيل.",
+            "عمود الإدارة والشاشة (Drive Shaft & Screen): يربط المحرك بالدوار ويعرض المعلومات."
+          ]
+        }
+      },
+      {
+        icon: <Shield className="w-5 h-5" />,
+        en: {
+          title: "3. Safety Precautions",
+          items: [
+            "Ensure a sturdy, level work surface.",
+            "Balance the centrifuge: Sample tubes must be evenly filled and balanced to prevent damage.",
+            "Do not open the lid while the rotor is moving.",
+            "If the centrifuge is shaking excessively, pull the plug immediately."
+          ]
+        },
+        ar: {
+          title: "3. احتياطات السلامة",
+          items: [
+            "ضمان سطح عمل ثابت ومستوٍ.",
+            "موازنة الجهاز: يجب أن تكون أنابيب العينات ممتلئة بالتساوي ومتوازنة لمنع التلف.",
+            "عدم فتح الغطاء أثناء دوران الدوار.",
+            "إذا كان الجهاز يهتز بشكل مفرط، افصل القابس (الكهرباء) فوراً."
+          ]
+        }
+      },
+      {
+        icon: <CheckCircle2 className="w-5 h-5" />,
+        en: {
+          title: "4. Types of Rotors",
+          items: [
+            "Fixed angle: Short distance to travel, shorter run time. Most widely used.",
+            "Swinging buckets: Longer distance, better separation in density gradient. Easier to withdraw supernatant.",
+            "Vertical tube: Keeps tubes parallel to the rotational axis. Bands form across the tube's diameter.",
+            "Almost vertical tube: Used for gradient centrifugation."
+          ]
+        },
+        ar: {
+          title: "4. أنواع الدوارات (Rotors)",
+          items: [
+            "الزاوية الثابتة (Fixed angle): مسافة انتقال قصيرة، وقت تشغيل أقصر. الأكثر استخداماً.",
+            "الدلاء المتأرجحة (Swinging buckets): مسافة أطول، فصل أفضل في تدرج الكثافة. يسهل سحب السائل الطافي.",
+            "الأنبوب العمودي (Vertical tube): يبقي الأنابيب موازية لمحور الدوران. تتشكل النطاقات عبر قطر الأنبوب.",
+            "الأنبوب شبه العمودي (Almost vertical tube): يستخدم للطرد المركزي المتدرج."
+          ]
+        }
+      },
+      {
+        icon: <AlertCircle className="w-5 h-5" />,
+        en: {
+          title: "5. Maintenance and Faults",
+          items: [
+            "Common faults: Motor (carbon brushes, internal coil) and electronic faults (power supply, screen).",
+            "Keep the centrifuge properly lubricated.",
+            "Pay close attention to noise, vibration, or grinding and stop the unit immediately if this occurs."
+          ]
+        },
+        ar: {
+          title: "5. الصيانة والأعطال",
+          items: [
+            "الأعطال الشائعة: المحرك (الفرش الكربونية، الملف الداخلي) والأعطال الإلكترونية (مزود الطاقة، الشاشة).",
+            "حافظ على تشحيم جهاز الطرد المركزي بشكل صحيح.",
+            "انتبه جيداً للضوضاء أو الاهتزاز أو الاحتكاك وأوقف الوحدة فوراً في حالة حدوث ذلك."
+          ]
+        }
+      }
+    ]
   },
-  termsTitle: { en: "Key Terms", ar: "أهم المصطلحات" },
-  terms: [
-    {
-      id: "lab-design",
-      color: "blue",
-      en: { term: "Laboratory Design", def: "Planning the layout and features of a lab to ensure safety, efficiency, and compliance with standards." },
-      ar: { term: "تصميم المختبر", def: "تخطيط وتصميم مساحة وميزات المختبر لضمان السلامة والكفاءة والامتثال للمعايير." }
+  lecture3: {
+    title: { en: "Lecture 3: Coming Soon", ar: "المحاضرة 3: قريباً" },
+    subtitle: { en: "Medical Instrumentation I", ar: "الأجهزة الطبية 1" },
+    summaryTitle: { en: "Lecture Summary", ar: "ملخص المحاضرة" },
+    summary: {
+      en: "The content for this lecture has not been uploaded yet. Please check back later.",
+      ar: "لم يتم رفع محتوى هذه المحاضرة بعد. يرجى التحقق لاحقاً."
     },
-    {
-      id: "workflow",
-      color: "emerald",
-      en: { term: "Workflow Efficiency", def: "Optimizing the layout to minimize unnecessary movement and increase productivity." },
-      ar: { term: "كفاءة سير العمل", def: "تحسين التصميم لتقليل الحركة غير الضرورية وزيادة الإنتاجية." }
-    },
-    {
-      id: "zoning",
-      color: "amber",
-      en: { term: "Zoning", def: "Dividing the lab into specific functional areas (e.g., preparation, storage, administrative)." },
-      ar: { term: "التقسيم", def: "تقسيم المختبر إلى مناطق وظيفية محددة (مثل: التحضير، التخزين، الإدارة)." }
-    },
-    {
-      id: "biosafety",
-      color: "purple",
-      en: { term: "Biosafety Cabinets", def: "Enclosed workspaces for handling biological materials safely and preventing contamination." },
-      ar: { term: "كبائن السلامة البيولوجية", def: "مساحات عمل مغلقة للتعامل مع المواد البيولوجية بأمان ومنع التلوث." }
-    },
-    {
-      id: "fume-hoods",
-      color: "rose",
-      en: { term: "Fume Hoods", def: "Ventilation devices designed to limit exposure to hazardous or toxic chemical fumes." },
-      ar: { term: "أغطية الدخان", def: "أجهزة تهوية مصممة للحد من التعرض للأبخرة الكيميائية الخطرة أو السامة." }
-    }
-  ],
-  sectionsTitle: { en: "Detailed Notes", ar: "الملاحظات التفصيلية" },
-  sections: [
-    {
-      icon: <BookOpen className="w-5 h-5" />,
-      en: {
-        title: "1. Purpose and Function",
-        items: [
-          "Varies based on use: research, diagnostics, education, or manufacturing.",
-          "Must support planned testing and research activities.",
-          "Needs adaptability for future technological advancements and changes in research focus."
-        ]
-      },
-      ar: {
-        title: "1. الغرض والوظيفة",
-        items: [
-          "يختلف بناءً على الاستخدام: البحث، التشخيص، التعليم، أو التصنيع.",
-          "يجب أن يدعم أنشطة الاختبار والبحث المخطط لها.",
-          "يحتاج إلى القدرة على التكيف مع التطورات التكنولوجية المستقبلية وتغيرات التركيز البحثي."
-        ]
-      }
-    },
-    {
-      icon: <Zap className="w-5 h-5" />,
-      en: {
-        title: "2. Design Principles",
-        items: [
-          "Safety: Protocols embedded into layout to protect users and environment (hazardous materials, contamination risks).",
-          "Workflow Efficiency: Minimize unnecessary movement, logical equipment positioning.",
-          "Flexibility: Modular features for easy reconfiguration as scientific work changes.",
-          "Energy Efficiency: Minimize environmental impact and energy consumption."
-        ]
-      },
-      ar: {
-        title: "2. مبادئ التصميم",
-        items: [
-          "السلامة: دمج بروتوكولات السلامة في التصميم لحماية المستخدمين والبيئة (المواد الخطرة، مخاطر التلوث).",
-          "كفاءة سير العمل: تقليل الحركة غير الضرورية، وضع المعدات بشكل منطقي.",
-          "المرونة: ميزات معيارية (Modular) لسهولة إعادة التكوين مع تغير العمل العلمي.",
-          "كفاءة الطاقة: تقليل التأثير البيئي واستهلاك الطاقة."
-        ]
-      }
-    },
-    {
-      icon: <Layout className="w-5 h-5" />,
-      en: {
-        title: "3. Laboratory Layout",
-        items: [
-          "Zoning: Divided by function (preparation areas, storage, administrative spaces, specialized equipment).",
-          "Movement Flow: Smooth flow to minimize cross-contamination.",
-          "Ventilation and Airflow: Maintain air quality, remove contaminants, and ensure user comfort."
-        ]
-      },
-      ar: {
-        title: "3. تخطيط المختبر",
-        items: [
-          "التقسيم: مقسم حسب الوظيفة (مناطق التحضير، التخزين، المساحات الإدارية، المعدات المتخصصة).",
-          "تدفق الحركة: تدفق سلس لتقليل التلوث المتبادل.",
-          "التهوية وتدفق الهواء: الحفاظ على جودة الهواء وإزالة الملوثات وضمان راحة المستخدم."
-        ]
-      }
-    },
-    {
-      icon: <CheckCircle2 className="w-5 h-5" />,
-      en: {
-        title: "4. Key Elements",
-        items: [
-          "Workbenches and Workstations: Durable and chemical-resistant.",
-          "Storage: Locked cabinets for hazards, cold storage for temperature-sensitive items.",
-          "Lighting: Proper lighting to reduce errors and improve focus.",
-          "Waste Management: Integrated systems for chemical, biological, and radioactive waste."
-        ]
-      },
-      ar: {
-        title: "4. العناصر الأساسية",
-        items: [
-          "طاولات ومحطات العمل: متينة ومقاومة للمواد الكيميائية.",
-          "التخزين: خزائن مقفلة للمواد الخطرة، وتخزين بارد للعناصر الحساسة للحرارة.",
-          "الإضاءة: إضاءة مناسبة لتقليل الأخطاء وتحسين التركيز.",
-          "إدارة النفايات: أنظمة متكاملة للتخلص من النفايات الكيميائية والبيولوجية والمشعة."
-        ]
-      }
-    },
-    {
-      icon: <Shield className="w-5 h-5" />,
-      en: {
-        title: "5. Safety & Environment",
-        items: [
-          "Fire Safety: Fire extinguishers and clear emergency exits are essential.",
-          "Emergency Protocols: Easy access to eyewash stations and showers.",
-          "Biosafety Levels (BSL): Define containment levels for handling biological materials.",
-          "User Comfort: Adjustable workstations and consumable furniture to reduce stress.",
-          "Conservation: Sustainable design incorporates low-flow fixtures and energy-efficient equipment."
-        ]
-      },
-      ar: {
-        title: "5. السلامة والبيئة",
-        items: [
-          "السلامة من الحرائق: طفايات حريق ومخارج طوارئ واضحة تعتبر ضرورية.",
-          "بروتوكولات الطوارئ: سهولة الوصول إلى محطات غسيل العين والاستحمام.",
-          "مستويات السلامة البيولوجية (BSL): تحديد مستويات الاحتواء للتعامل مع المواد البيولوجية.",
-          "راحة المستخدم: محطات عمل قابلة للتعديل وأثاث مريح لتقليل الإجهاد.",
-          "الحفاظ على البيئة: التصميم المستدام يدمج تركيبات منخفضة التدفق ومعدات موفرة للطاقة."
-        ]
-      }
-    }
-  ]
+    termsTitle: { en: "Key Terms", ar: "أهم المصطلحات" },
+    terms: [],
+    sectionsTitle: { en: "Detailed Notes", ar: "الملاحظات التفصيلية" },
+    sections: []
+  }
 };
 
 const termColors: Record<string, { border: string, shadow: string, bg: string, text: string, badgeBg: string, badgeText: string }> = {
@@ -160,34 +177,120 @@ const termColors: Record<string, { border: string, shadow: string, bg: string, t
 
 export default function App() {
   const [showIframeAlert, setShowIframeAlert] = useState(false);
+  const [showLectureModal, setShowLectureModal] = useState(false);
+  const [activeLecture, setActiveLecture] = useState('lecture2');
 
-  const handlePrint = () => {
+  const [isDownloading, setIsDownloading] = useState(false);
+
+  const handlePrint = async () => {
     // Check if we are inside an iframe (like Google AI Studio preview)
     if (window.self !== window.top) {
       setShowIframeAlert(true);
-    } else {
-      window.print();
+      return;
+    }
+
+    const element = document.getElementById('pdf-content');
+    if (!element) return;
+
+    setIsDownloading(true);
+    try {
+      const opt = {
+        margin:       10,
+        filename:     `${content.title.ar}.pdf`,
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2, useCORS: true, windowWidth: 414 }, // Force mobile width rendering
+        jsPDF:        { unit: 'px', format: [414, 896], orientation: 'portrait' }
+      };
+
+      await html2pdf().set(opt).from(element).save();
+    } catch (error) {
+      console.error("Error generating PDF:", error);
+    } finally {
+      setIsDownloading(false);
     }
   };
+
+  const content = lectures[activeLecture];
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 font-sans">
       {/* Header */}
       <header className="bg-white border-b border-slate-200 sticky top-0 z-10 no-print shadow-sm">
-        <div className="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2 text-blue-700">
+        <div className="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between gap-4">
+          <div className="flex items-center gap-2 text-blue-700 shrink-0">
             <FileText className="w-6 h-6" />
             <span className="font-bold text-lg hidden sm:inline">Lecture Notes</span>
           </div>
+          
+          {/* Lecture Selector Button */}
+          <div className="flex-1 flex justify-center" dir="rtl">
+            <button
+              onClick={() => setShowLectureModal(true)}
+              className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg font-medium text-sm transition-colors border border-slate-200 max-w-[150px] sm:max-w-xs"
+              title="اختر المحاضرة"
+            >
+              <span className="truncate">{content.title.ar}</span>
+              <ChevronDown className="w-4 h-4 shrink-0" />
+            </button>
+          </div>
+
           <button 
             onClick={handlePrint}
-            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-sm font-medium shadow-sm"
+            disabled={isDownloading}
+            className={`flex items-center gap-2 px-4 py-2 text-white rounded-md transition-colors text-sm font-medium shadow-sm shrink-0 ${
+              isDownloading ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'
+            }`}
           >
-            <Download className="w-4 h-4" />
-            تحميل PDF / Download
+            <Download className={`w-4 h-4 ${isDownloading ? 'animate-bounce' : ''}`} />
+            <span className="hidden sm:inline">
+              {isDownloading ? 'جاري التحميل...' : 'تحميل PDF'}
+            </span>
           </button>
         </div>
       </header>
+
+      {/* Lecture Selection Modal */}
+      {showLectureModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4 no-print">
+          <div className="bg-white rounded-2xl shadow-xl max-w-md w-full p-6 relative animate-in fade-in zoom-in duration-200">
+            <button 
+              onClick={() => setShowLectureModal(false)}
+              className="absolute top-4 left-4 text-slate-400 hover:text-slate-600 transition-colors"
+            >
+              <X className="w-5 h-5" />
+            </button>
+            
+            <div className="flex flex-col space-y-4" dir="rtl">
+              <div className="flex items-center gap-3 border-b border-slate-100 pb-4">
+                <div className="w-10 h-10 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center shrink-0">
+                  <BookOpen className="w-5 h-5" />
+                </div>
+                <h3 className="text-xl font-bold text-slate-900">اختر المحاضرة</h3>
+              </div>
+              
+              <div className="space-y-2 mt-2 max-h-[60vh] overflow-y-auto pr-1 custom-scrollbar">
+                {Object.entries(lectures).map(([key, lecture]) => (
+                  <button
+                    key={key}
+                    onClick={() => {
+                      setActiveLecture(key);
+                      setShowLectureModal(false);
+                    }}
+                    className={`w-full text-right px-4 py-3 rounded-xl transition-colors flex items-center justify-between ${
+                      activeLecture === key 
+                        ? 'bg-blue-50 border border-blue-200 text-blue-700' 
+                        : 'bg-slate-50 border border-slate-100 text-slate-700 hover:bg-slate-100'
+                    }`}
+                  >
+                    <span className="font-medium">{lecture.title.ar}</span>
+                    {activeLecture === key && <CheckCircle2 className="w-5 h-5 text-blue-600 shrink-0" />}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Iframe Alert Modal */}
       {showIframeAlert && (
@@ -265,6 +368,7 @@ export default function App() {
           </section>
 
           {/* Key Terms Section */}
+          {content.terms.length > 0 && (
           <section>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-3 mb-8">
               <div className="flex items-center gap-2">
@@ -276,7 +380,7 @@ export default function App() {
             </div>
             
             <div className="space-y-6">
-              {content.terms.map((term, idx) => {
+              {content.terms.map((term: any, idx: number) => {
                 const colors = termColors[term.color];
                 return (
                   <div key={idx} className={`rounded-xl border-l-4 shadow-md overflow-hidden print-break-inside-avoid ${colors.border} ${colors.shadow} ${colors.bg}`}>
@@ -305,8 +409,10 @@ export default function App() {
               })}
             </div>
           </section>
+          )}
 
           {/* Detailed Notes Section */}
+          {content.sections.length > 0 && (
           <section>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-3 mb-8">
               <div className="flex items-center gap-2">
@@ -359,6 +465,7 @@ export default function App() {
               ))}
             </div>
           </section>
+          )}
         </main>
         
         <footer className="text-center py-8 text-slate-500 text-sm no-print border-t border-slate-200 mt-12">

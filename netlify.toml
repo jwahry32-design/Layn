@@ -1,0 +1,13 @@
+[build]
+  # The command to build the app
+  command = "npm run build"
+  # The directory containing the built app
+  publish = "dist"
+
+# SPA Fallback routing
+# This is crucial for React apps. It tells Netlify to redirect all requests 
+# to index.html so that React can handle the routing without throwing 404 errors.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
