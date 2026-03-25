@@ -1,0 +1,5 @@
+{
+  "name": "Lecture Summary PDF",
+  "description": "A bilingual (Arabic/English) lecture summary app with PDF download functionality.",
+  "requestFramePermissions": []
+}
